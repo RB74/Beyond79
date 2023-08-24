@@ -6,10 +6,14 @@
 @tailwind components;
 @tailwind utilities;
 body {
-    @apply leading-[normal] m-0;
+  @apply leading-[normal] m-0;
 }
 *,
 ::before,
 ::after {
-    border-width: 0;
+  border-width: 0;
+}
+
+.block-green {
+  @apply rounded-3xs text-center ml-[31px] [background:linear-gradient(90deg,_rgba(116,_133,_144,_0.94),_rgba(0,_102,_51,_0.94)_0.01%,_rgba(214,_221,_217,_0.88)_99.99%,_rgba(116,_144,_130,_0))] w-[161.42px] py-[10px];
 }

@@ -12,6 +12,7 @@ import GetInvolved from "./pages/GetInvolved";
 import RequestHelp from "./pages/RequestHelp";
 import ResultPage from "./pages/ResultPage";
 import LandingPage from "./pages/LandingPage";
+import Search from "./pages/Search";
 
 function App() {
   const action = useNavigationType();
@@ -55,6 +56,7 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/faq" element={<FAQ />} />
+      <Route path="/search" element={<Search />} />
       <Route path="/resource-maps" element={<ResourceMaps />} />
       <Route path="/get-involved" element={<GetInvolved />} />
       <Route path="/request-help" element={<RequestHelp />} />

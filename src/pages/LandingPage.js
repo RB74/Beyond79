@@ -18,84 +18,96 @@ const LandingPage = () => {
   }, []);
 
   return (
-    <div className="relative bg-white w-full h-[3965px] overflow-hidden text-left text-xl text-white font-montserrat">
-      <img
-        className="absolute top-[0px] left-[0px] w-[1550px] h-[696px] object-cover"
-        alt=""
-        src="/image-13@2x.png"
-      />
-      <div className="absolute top-[191px] left-[calc(50%_-_720px)] w-[1440px] h-[600px] text-center text-mini font-verdana">
-        <div className="absolute top-[calc(50%_-_30.02px)] left-[calc(50%_-_128.08px)] w-[215.16px] h-[60.05px]">
-          <div className="absolute top-[calc(50%_+_30.03px)] left-[calc(50%_-_107.41px)] rounded-3xs [background:linear-gradient(180deg,_rgba(21,_72,_47,_0.94),_rgba(214,_221,_217,_0.88)_99.99%,_rgba(87,_113,_100,_0))] w-[59.46px] h-[214.99px] [transform:_rotate(-90.17deg)] [transform-origin:0_0]" />
-          <div className="absolute top-[calc(50%_-_22.01px)] left-[calc(50%_-_87.99px)] inline-block w-[181.19px] h-[46.63px] [text-shadow:0px_4px_4px_rgba(0,_0,_0,_0.5)]">
-            Center for Peacemaking Practice
+    <div className="relative  w-full  h-[3965px] overflow-hidden text-left text-xl text-white font-montserrat">
+      <div className="h-[662px] flex  justify-between bg-no-repeat bg-cover bg-[url('../public/image-13@2x.png')]">
+        <div className=" mt-[15px]  h-[600px]  text-mini font-verdana">
+          <img
+            className=" w-[516px]  object-cover"
+            alt=""
+            src="/link--betterevidenceproject-rev-gold-widepng2@2x.png"
+          />
+          <div className="block-green">
+            <div className="[text-shadow:0px_4px_4px_rgba(0,_0,_0,_0.5)]">
+              <p className="m-0">George Mason</p>
+              <p className="m-0">University</p>
+            </div>
+          </div>
+          <div className="block-green">
+            <div className=" [text-shadow:0px_4px_4px_rgba(0,_0,_0,_0.5)]">
+              Center for Peacemaking Practice
+            </div>
+          </div>
+          <div className=" block-green">
+            <div className="[text-shadow:0px_4px_4px_rgba(0,_0,_0,_0.5)]">
+              <p className="m-0">Carter School</p>
+              <p className="m-0">for Peace and Conflict Resolution</p>
+            </div>
           </div>
         </div>
-        <div className="absolute top-[calc(50%_-_31px)] left-[calc(50%_-_505px)] w-[226px] h-16">
-          <div className="absolute top-[calc(50%_+_32px)] left-[calc(50%_-_102.99px)] rounded-3xs [background:linear-gradient(180deg,_rgba(116,_133,_144,_0.94),_rgba(0,_102,_51,_0.94)_0.01%,_rgba(214,_221,_217,_0.88)_99.99%,_rgba(116,_144,_130,_0))] w-[63.42px] h-[205.86px] [transform:_rotate(-90.16deg)] [transform-origin:0_0]" />
-          <div className="absolute top-[calc(50%_-_26.48px)] left-[calc(50%_-_113px)] inline-block w-[226px] h-[50.76px] [text-shadow:0px_4px_4px_rgba(0,_0,_0,_0.5)]">
-            <p className="m-0">Carter School</p>
-            <p className="m-0">for Peace and Conflict Resolution</p>
+        <div className="rounded-8xs mt-[31px] h-8 flex flex-row items-center justify-center gap-[65px] text-[22px] text-white font-montserrat">
+          <div className="flex flex-row items-center justify-center gap-[33px]">
+            <div className="relative leading-[140.9%] font-semibold">Home</div>
+            <div className="relative text-lg leading-[140.9%] font-medium text-gainsboro-100 cursor-pointer">
+              Our Story
+            </div>
+            <div
+              className="relative text-lg leading-[140.9%] font-medium text-gainsboro-100 cursor-pointer"
+              onClick={onResourceCenterText1Click}
+            >
+              Resource Center
+            </div>
           </div>
-        </div>
-        <div className="absolute top-[275px] left-[964px] w-[189px] h-[51px]">
-          <div className="absolute top-[51px] left-[0.16px] rounded-3xs [background:linear-gradient(180deg,_rgba(230,_247,_247,_0.94)_0.01%,_rgba(71,_147,_136,_0.91)_0.02%,_rgba(214,_221,_217,_0.88)_99.99%,_rgba(116,_144,_130,_0))] w-[50.54px] h-[188.84px] [transform:_rotate(-90.19deg)] [transform-origin:0_0]" />
-          <div className="absolute top-[calc(50%_-_19.5px)] left-[calc(50%_-_69.5px)] inline-block w-[139.42px] h-[39.78px] [text-shadow:0px_4px_4px_rgba(0,_0,_0,_0.5)]">
-            <p className="m-0">George Mason</p>
-            <p className="m-0">University</p>
-          </div>
+          <img
+            className="relative w-6 h-6 overflow-hidden shrink-0 cursor-pointer"
+            alt=""
+            src="/iconamoonsearchlight.svg"
+            onClick={onIconamoonsearchLightClick}
+          />
+          <button
+            className="rounded-8xs text-teal  bg-white  leading-[20px] font-semibold flex flex-row py-3 pr-3.5 pl-6 items-start justify-start cursor-pointer"
+            onClick={onBigButtonContainerClick}
+          >
+            Get Involved
+          </button>
         </div>
       </div>
-      <div className="absolute top-[883px] left-[879px] bg-antiquewhite w-[471px] h-[519px]" />
-      <img
-        className="absolute top-[603px] left-[245px] w-[634px] h-[733px] object-cover"
-        alt=""
-        src="/rectangle-3@2x.png"
-      />
-      <div className="absolute top-[603px] left-[824px] bg-white shadow-[0px_4px_24px_rgba(103,_103,_103,_0.1)] w-[474px] h-[733px]" />
-      <div className="absolute top-[748.5px] left-[878.5px] shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] box-border w-[378px] h-px border-t-[1px] border-solid border-black" />
-      <div className="absolute top-[878px] left-[860px] w-[379px] h-[315px] flex flex-col items-start justify-start gap-[20px] text-center text-lg text-dimgray">
+      <div className="flex">
+        <div className="bg-no-repeat w-[634px] h-[733px] bg-cover bg-[url('../public/rectangle-3@2x.png')]">
+          <div>Welcome To The Better Evidence</div>
+          <div className="text-lg leading-[154.9%] flex items-center w-[543px] h-[117px] [text-shadow:0px_4px_10px_rgba(0,_0,_0,_0.25)]">
+            <span className="[line-break:anywhere] w-full">
+              <p className="m-0">
+                Through its Resource Center, BEP curates and constantly updates
+                a wide array of evidence-based materials to enable
+                practitioners,
+              </p>
+              <p className="m-0">
+                donors, and policymakers, to strengthen their efforts to prevent
+                and end wars and armed conflicts.
+              </p>
+            </span>
+          </div>
+        </div>
+        <div className="bg-white shadow-[0px_4px_24px_rgba(103,_103,_103,_0.1)] w-[474px] h-[733px]"></div>
+      </div>
+
+      {/* <div className="absolute top-[878px] left-[860px] w-[379px] h-[315px] flex flex-col items-start justify-start gap-[20px] text-center text-lg text-dimgray">
         <div className="relative leading-[154.9%] flex items-center justify-center w-[420px]">{`The Better Evidence Project (BEP) connects the most useful evidence developed by scholars and practitioners with other practitioners, policymakers, donors, and scholars who seek evidence-based insights to guide their work. `}</div>
         <div className="relative leading-[154.9%] flex items-center justify-center w-[420px]">
           BEP addresses gaps in the knowledge base in the field of conflict
           resolution and brings existing evidence to those working to prevent
           war.
         </div>
-      </div>
-      <div className="absolute top-[1164px] left-[268px] text-lg leading-[154.9%] flex items-center w-[543px] h-[117px] [text-shadow:0px_4px_10px_rgba(0,_0,_0,_0.25)]">
-        <span className="[line-break:anywhere] w-full">
-          <p className="m-0">
-            Through its Resource Center, BEP curates and constantly updates a
-            wide array of evidence-based materials to enable practitioners,
-          </p>
-          <p className="m-0">
-            donors, and policymakers, to strengthen their efforts to prevent and
-            end wars and armed conflicts.
-          </p>
-        </span>
-      </div>
-      <div className="absolute top-[1418px] left-[calc(50%_-_501px)] rounded-3xs bg-whitesmoke shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] w-[1001px] h-[207px] overflow-hidden text-45xl text-chocolate-100 font-verdana">
-        <i className="absolute top-[25px] left-[calc(50%_-_335.5px)] text-17xl">
-          What Is The Cost Of Violent Conflict?
-        </i>
-        <div className="absolute bottom-[60px] left-[149px] text-black">
-          100
-        </div>
-        <div className="absolute top-[calc(50%_-_34.5px)] left-[calc(50%_-_72.5px)] text-black">
-          14.4
-        </div>
-        <div className="absolute top-[calc(50%_-_34.5px)] right-[126px] text-black">
-          48.9
-        </div>
-        <div className="absolute bottom-[41px] left-[110px] text-base">
-          Million Forcibly Displaced
-        </div>
-        <div className="absolute top-[calc(50%_+_43.5px)] left-[calc(50%_-_100.5px)] text-base">
-          Trillion Dollars ($) a year
-        </div>
-        <div className="absolute top-[71.01%] right-[108px] text-base">
-          Million Face Starvation
-        </div>
+      </div> */}
+
+      <div className="rounded-3xs bg-whitesmoke shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] w-[1001px] overflow-hidden text-45xl text-chocolate-100 font-verdana">
+        <i className="text-17xl">What Is The Cost Of Violent Conflict?</i>
+        <div className=" text-black">100</div>
+        <div className=" text-black">14.4</div>
+        <div className=" text-black">48.9</div>
+        <div className="text-base">Million Forcibly Displaced</div>
+        <div className=" text-base">Trillion Dollars ($) a year</div>
+        <div className="text-base">Million Face Starvation</div>
       </div>
       <div className="absolute top-[1636px] left-[159px] w-[1237px] h-[633px] text-center text-[45px] text-gray-100">
         <div className="absolute top-[0px] left-[0px] bg-gainsboro-200 w-[1237px] h-[633px]" />
@@ -115,10 +127,7 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <b className="absolute top-[629px] left-[853px] text-[40px] leading-[50.5px] text-seagreen-100">
-        <p className="[margin-block-start:0] [margin-block-end:8px]">{`Welcome To `}</p>
-        <p className="m-0">The Better Evidence</p>
-      </b>
+
       <b className="absolute top-[2388px] left-[861px] text-[55px] leading-[42px] text-gray-100 text-center">
         Get Involved
       </b>
@@ -405,47 +414,7 @@ const LandingPage = () => {
           4400 University Drive, Fairfax, Virginia 22030
         </div>
       </div>
-      <div className="absolute h-[5.12%] top-[0.73%] bottom-[94.15%] left-[calc(50%_-_1347px)] w-[1920px] overflow-hidden text-teal font-source-sans-pro">
-        <div className="absolute top-[25.26px] left-[1758px] w-[106px] h-11">
-          <div className="absolute top-[0px] left-[0px] w-[106px] h-11">
-            <div
-              className="absolute top-[-0.5px] left-[-46px] rounded-8xs bg-white flex flex-row py-3 pr-3.5 pl-6 items-start justify-start cursor-pointer"
-              onClick={onBigButtonContainerClick}
-            >
-              <div className="relative leading-[20px] font-semibold">
-                Get Involved
-              </div>
-            </div>
-          </div>
-        </div>
-        <img
-          className="absolute top-[0.26px] left-[0px] w-[400px] h-[113.55px] object-cover"
-          alt=""
-          src="/link--betterevidenceproject-rev-gold-widepng1@2x.png"
-        />
-        <div className="absolute top-[31px] left-[1285px] rounded-8xs bg-gray-200 w-[415px] h-8 flex flex-row items-center justify-center gap-[65px] text-[22px] text-white font-montserrat">
-          <div className="w-[307px] flex flex-row items-center justify-center gap-[33px]">
-            <div className="relative leading-[140.9%] font-semibold">Home</div>
-            <div
-              className="relative text-lg leading-[140.9%] font-medium text-gainsboro-100 cursor-pointer"
-              onClick={onResourceCenterText1Click}
-            >
-              Resource Center
-            </div>
-          </div>
-          <img
-            className="relative w-6 h-6 overflow-hidden shrink-0 cursor-pointer"
-            alt=""
-            src="/iconamoonsearchlight.svg"
-            onClick={onIconamoonsearchLightClick}
-          />
-        </div>
-        <img
-          className="absolute top-[32px] left-[817px] w-[516px] h-[147px] object-cover"
-          alt=""
-          src="/link--betterevidenceproject-rev-gold-widepng2@2x.png"
-        />
-      </div>
+
       <div className="absolute top-[3258px] left-[calc(50%_-_532px)] rounded-3xs bg-chocolate-200 w-[1065px] h-[181px]" />
       <div className="absolute top-[3277px] left-[274px] text-17xl leading-[154.9%] font-semibold text-center">
         Stay Up To Date
