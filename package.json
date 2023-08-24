@@ -1,0 +1,60 @@
+{
+  "name": "aws-kendra-react-app",
+  "version": "0.1.0",
+  "private": true,
+  "authors": [
+    {
+      "name": "Savepointsoftware LLC",
+      "email": "engineering@savepointsoftware.com"
+    }
+  ],
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.17.5",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.0.11",
+    "core-js": "^3.32.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "autoprefixer": "^10.4.15",
+    "aws-sdk": "^2.1436.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "postcss": "^8.4.28",
+    "tailwindcss": "^3.3.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
