@@ -1,0 +1,155 @@
+backend default {
+    .host = "127.0.0.1";
+    .port = "8080";
+    .connect_timeout = 10s;
+    .first_byte_timeout = 60s;
+    .between_bytes_timeout = 5s;
+}
+
+sub vcl_recv {
+
+    set req.backend = default;
+
+    # always bail early
+
+    # redirect CloudFront to SSL if needed -- we can't redirect CloudFront to https://www. because
+    # it would end up looking like https://www.djaq932800.cloudfront.net to the backend
+    # and CloudFront won't be happy about that because they don't give a www CNAME too
+    if (
+        req.http.Host ~ "^[a-z0-9]+\.cloudfront\.net$"
+        # didn't request on https
+        && req.http.X-Forwarded-Proto !~ "(?i)https"
+    ) {
+        # redirect to SSL CloudFront request
+        set req.http.Host = "https://" + req.http.Host;
+        error 750 req.http.Host;
+    }
+
+    # these should all be in the CDN, if we get here, the CDN is requesting it
+    if (req.url ~ "(?i)\.(jpg|jpeg|gif|png|tiff|tif|svg|swf|ico|css|kss|js|vsd|doc|ppt|pps|xls|pdf|mp3|mp4|m4a|ogg|mov|avi|wmv|sxw|zip|gz|bz2|tar|rar|odc|odb|odf|odg|odi|odp|ods|odt|sxc|sxd|sxi|sxw|dmg|torrent|deb|msi|iso|rpm|jar|class|flv|exe)$") {
+        unset req.http.cookie;
+        unset req.http.cache-control;
+        unset req.http.pragma;
+        unset req.http.expires;
+        unset req.http.etag;
+        unset req.http.X-Forwarded-For;
+        return (lookup);
+    }
+
+    if (
+        # didn't request via CDN
+        req.http.Host ~ "^[a-z0-9]+\.cloudfront\.net$"
+        # didn't request on www
+        && req.http.Host !~ "^staging\."
+        # didn't request on https
+        && req.http.X-Forwarded-Proto !~ "(?i)https"
+    ) {
+        set req.http.Host = "https://staging." + req.http.Host;
+        error 750 req.http.Host;
+    }
+
+    # If we have HTTP auth OR a drupal session OR goldtrack, then we don't cache
+    # Note, this is slightly different from the normal method as we have mobile cookies enabled
+    if (req.http.Authorization || req.http.Cookie ~ ".*SESS[a-f0-9]{16}.*" || req.url ~ "goldtrack") {
+        /* Not cacheable by default */
+        return (pass);
+    }
+
+    # deny access to some common drupal scripts and identifying text files
+    # as well as server-status
+    if(req.url ~ "/cron\.php.*$" ||
+        req.url ~ "/install\.php.*$" ||
+        req.url ~ "/update\.php.*$" ||
+        req.url ~ "/CHANGELOG\.txt$" ||
+        req.url ~ "/COPYRIGHT\.txt$" ||
+        req.url ~ "/INSTALL.*\.txt$" ||
+        req.url ~ "/MAINTAINERS\.txt$" ||
+        req.url ~ "/PRESSFLOW\.txt$" ||
+        req.url ~ "/UPGRADE\.txt$" ||
+        req.url ~ "/server-status.*"){
+        error 403 "Forbidden";
+    }
+
+    if (req.request != "GET" &&
+        req.request != "HEAD" &&
+        req.request != "PUT" &&
+        req.request != "POST" &&
+        req.request != "TRACE" &&
+        req.request != "OPTIONS" &&
+        req.request != "DELETE") {
+            /* Non-RFC2616 or CONNECT which is weird. */
+            return (pipe);
+    }
+
+    # set their IP in the headers
+    if (req.http.x-forwarded-for) {
+        set req.http.X-Forwarded-For = req.http.X-Forwarded-For + ", " + client.ip;
+    } else {
+        set req.http.X-Forwarded-For = client.ip;
+    }
+
+    if (req.request != "GET" && req.request != "HEAD") {
+        /* We only deal with GET and HEAD by default */
+        return (pass);
+    }
+
+    // remove all cookies for anonymous users
+    if(req.http.Cookie !~ ".*SESS[a-f0-9]{16}.*") {
+        unset req.http.cookie;
+        unset req.http.cache-control;
+        unset req.http.pragma;
+        unset req.http.expires;
+        unset req.http.etag;
+    }
+
+}
+
+sub vcl_pipe {
+    set bereq.http.connection = "close";
+    return (pipe);
+}
+
+sub vcl_fetch {
+
+    unset beresp.http.X-Amz-Id-2;
+    unset beresp.http.X-Amz-Meta-Group;
+    unset beresp.http.X-Amz-Meta-Owner;
+    unset beresp.http.X-Amz-Meta-Permissions;
+    unset beresp.http.X-Amz-Request-Id;
+
+}
+
+sub vcl_deliver {
+    # remove some headers
+    remove resp.http.X-Powered-By;
+    remove resp.http.X-Generator;
+    remove resp.http.Via;
+    remove resp.http.X-Varnish;
+    remove resp.http.X-Drupal-Cache;
+    remove resp.http.Server;
+
+    if (req.url ~ "(?i)\.(jpg|jpeg|gif|png|tiff|tif|svg|swf|ico|css|kss|js|vsd|doc|ppt|pps|xls|pdf|mp3|mp4|m4a|ogg|mov|avi|wmv|sxw|zip|gz|bz2|tar|rar|odc|odb|odf|odg|odi|odp|ods|odt|sxc|sxd|sxi|sxw|dmg|torrent|deb|msi|iso|rpm|jar|class|flv|exe)$") {
+	    unset resp.http.Vary;
+    } else {
+	    set resp.http.Vary = "Cookie";
+    }
+
+    if(obj.hits > 0){
+        set resp.http.X-Cache = "Cached";
+        set resp.http.X-Hits = obj.hits;
+    } else {
+        set resp.http.X-Cache = "Fresh";
+    }
+
+    return (deliver);
+}
+
+sub vcl_error {
+
+    if (obj.status == 750){
+        set obj.http.Server = "The Cache";
+        set obj.http.Location = obj.response + req.url;
+        set obj.status = 301;
+    }
+
+}

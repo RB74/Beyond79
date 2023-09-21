@@ -1,0 +1,11 @@
+cron:
+  image: urldigital.com/beyond79/cron:prod
+  container_name: cron
+  restart: always
+  extra_hosts:
+    - dbmaster:172.31.10.118
+  volumes:
+    - ../src/www:/var/www
+    - ./production.ssmtp.conf:/etc/ssmtp/ssmtp.conf
+    - ./production.crontab:/etc/crontab
+    - /storage/resources:/var/www/goldexchangeapi.com/resources

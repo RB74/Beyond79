@@ -1,0 +1,23 @@
+nginx:
+  image: urldigital.com/beyond79/nginx:prod
+  container_name: wiki_nginx
+  restart: always
+  ports:
+    - 9003:80
+  links:
+    - wiki
+  volumes:
+    - ../src/www:/var/www
+    - /storage/wiki/data:/var/www/wiki/data
+    - /storage/wiki/lib:/var/www/wiki/lib
+    - ./conf.d:/etc/nginx/conf.d
+
+wiki:
+  image: urldigital.com/beyond79/wiki:prod
+  container_name: wiki
+  restart: always
+  volumes:
+    - ../src/www:/var/www
+    - /storage/wiki/data:/var/www/wiki/data
+    - /storage/wiki/lib:/var/www/wiki/lib
+    - ./php-fpm.d:/etc/php-fpm.d

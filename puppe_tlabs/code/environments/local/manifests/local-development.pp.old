@@ -1,0 +1,639 @@
+node /.*dev\.beyond79\.com/ {
+
+    # repos
+    yumrepo { "EPEL":
+      baseurl => "https://dl.fedoraproject.org/pub/epel/7/$architecture",
+      descr => "EPEL repository",
+      enabled => 1,
+      gpgcheck => 0
+   }
+
+    yumrepo { "IUS":
+      baseurl => "https://dl.iuscommunity.org/pub/ius/stable/CentOS/7/$architecture",
+      descr => "IUS Community repository",
+      enabled => 1,
+      gpgcheck => 0
+   }
+   # end repos
+
+    # dns
+    class { 'resolv_conf':
+        searchpath => ['.beyond79.com'],
+        nameservers => ['10.10.1.30', '8.8.8.8'],
+    }
+    # end dns
+
+    # vcs code
+    vcsrepo { '/var/www/b79drupal':
+        ensure => present,
+        provider => git,
+        source => 'git@bitbucket.org:urldigital/b79drupal.git',
+        revision => 'develop'
+    }
+
+    vcsrepo { '/var/www/goldtrack':
+        ensure => present,
+        provider => git,
+        source => 'git@bitbucket.org:urldigital/goldtrack.git',
+        revision => 'develop'
+    }
+
+    vcsrepo { '/var/www/b79api':
+        ensure => present,
+        provider => git,
+        source => 'git@bitbucket.org:urldigital/b79api.git',
+        revision => 'develop'
+    }
+
+    vcsrepo { '/var/www/goldexchangeapi.com':
+        ensure => present,
+        provider => git,
+        source => 'git@bitbucket.org:urldigital/goldexchangeapi.com.git',
+        revision => 'develop'
+    }
+
+    vcsrepo { '/var/www/b79sapphire':
+        ensure => present,
+        provider => git,
+        source => 'git@bitbucket.org:urldigital/b79sapphire.git',
+        revision => 'develop'
+    }
+    #end code
+
+    # sapphire symlinks
+    file { '/var/www/sapphire':
+        ensure => 'link',
+        target => '/var/www/b79sapphire'
+    }
+    file { '/var/www/sapphire_dev':
+        ensure => 'link',
+        target => '/var/www/b79sapphire'
+    }
+    # end sapphire symlinks
+
+    # composer stuff
+    exec { 'b79api-install':
+        command => '/usr/local/bin/composer install',
+        cwd => '/var/www/b79api/',
+        creates => '/var/www/b79api/vendor/',
+        environment => ["COMPOSER_HOME=/usr/local/bin"],
+        path    => '/usr/bin:/usr/local/bin:~/.composer/vendor/bin/',
+        require => Class['php']
+    }
+    # end composer stuff
+
+    # drush stuff
+    staging::file { 'drush':
+      source => 'http://files.drush.org/drush.phar',
+      target => '/usr/local/bin/drush'
+    }
+    file { '/usr/local/bin/drush':
+        ensure=> present,
+        mode => '777',
+        require => Staging::File["drush"],
+    }
+    # end drush stuff
+
+    # memcached
+    class { 'memcached':
+        max_memory => '64M'
+    }
+    # end memcached
+
+    # php
+    include ::php
+    #end php
+
+    # nginx
+    class { 'nginx': }
+
+    file { '/etc/nginx/conf.d/drupal.include':
+        ensure => present,
+        source => 'puppet:///files/nginx-includes/drupal.include',
+    }
+
+    file { '/etc/nginx/conf.d/goldtrack.include':
+        ensure => present,
+        source => 'puppet:///files/nginx-includes/goldtrack.include',
+    }
+
+    nginx::resource::vhost { 'api.beyond79.com':
+        server_name => ['~.*api.beyond79.com'],
+        www_root => '/var/www/b79api/public/',
+        access_log => '/var/log/nginx/api.beyond79.com-access.log',
+        error_log => '/var/log/nginx/api.beyond79.com-error.log',
+        try_files       => ['$uri', '$uri/', '/index.php?$query_string'],
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/beyond79.cer',
+        ssl_key => '/etc/pki/tls/certs/beyond79.key',
+        listen_port => 443,
+        ssl_port => 443,
+        require => [
+            File['/etc/pki/tls/certs/beyond79.cer'],
+            File['/etc/pki/tls/certs/beyond79.key']
+        ],
+    }
+
+    nginx::resource::location { "api-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "api.beyond79.com",
+         www_root        => "/var/www/b79api/public/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    file { '/etc/pki/tls/certs/beyond79.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/beyond79.cer',
+    }
+
+    file { '/etc/pki/tls/certs/beyond79.key':
+        ensure => present,
+        source => 'puppet:///files/certs/beyond79.key',
+    }
+
+    nginx::resource::vhost { 'secure.goldexchangeapi.com':
+        server_name => ['~.*secure.goldexchangeapi.com'],
+        www_root => '/var/www/goldexchangeapi.com/secure/public/',
+        access_log => '/var/log/nginx/secure.goldexchangeapi.com-access.log',
+        error_log => '/var/log/nginx/secure.goldexchangeapi.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/goldexchange.cer',
+        ssl_key => '/etc/pki/tls/certs/goldexchange.key',
+        listen_port => 80,
+        ssl_port => 443,
+        try_files => ['$uri', '$uri/', '/index.php?$query_string'],
+        require => [
+            File['/etc/pki/tls/certs/goldexchange.cer'],
+            File['/etc/pki/tls/certs/goldexchange.key']
+        ],
+    }
+
+    nginx::resource::location { "secure-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "secure.goldexchangeapi.com",
+         www_root        => "/var/www/goldexchangeapi.com/secure/public/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+   nginx::resource::vhost { 'admin.goldexchangeapi.com':
+       server_name => ['~.*admin.goldexchangeapi.com'],
+       www_root => '/var/www/goldexchangeapi.com/admin/public/',
+       access_log => '/var/log/nginx/goldexchangeapi.com-access.log',
+       error_log => '/var/log/nginx/goldexchangeapi.com-error.log',
+       ssl => true,
+       ssl_cert => '/etc/pki/tls/certs/goldexchange.cer',
+       ssl_key => '/etc/pki/tls/certs/goldexchange.key',
+       listen_port => 80,
+       ssl_port => 443,
+       try_files => ['$uri', '$uri/', '/index.php?$query_string'],
+       require => [
+           File['/etc/pki/tls/certs/goldexchange.cer'],
+           File['/etc/pki/tls/certs/goldexchange.key']
+       ],
+   }
+
+   nginx::resource::location { "gxadmin-php":
+        ensure          => present,
+        ssl             => true,
+        ssl_only        => true,
+        vhost           => "admin.goldexchangeapi.com",
+        www_root        => "/var/www/goldexchangeapi.com/admin/public/",
+        location        => '~ \.php$',
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        try_files => ['$uri', '/index.php?$query_string'],
+        fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+        fastcgi_script  => undef
+  }
+
+    file { '/etc/pki/tls/certs/goldexchange.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/goldexchange.cer',
+    }
+
+    file { '/etc/pki/tls/certs/goldexchange.key':
+        ensure => present,
+        source => 'puppet:///files/certs/goldexchange.key',
+    }
+
+    nginx::resource::vhost { 'beyond79.com':
+        server_name => ['www.beyond79.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/beyond79.com-access.log',
+        error_log => '/var/log/nginx/beyond79.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/beyond79.cer',
+        ssl_key => '/etc/pki/tls/certs/beyond79.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [
+                '/etc/nginx/conf.d/drupal.include',
+                '/etc/nginx/conf.d/goldtrack.include'
+            ],
+         },
+        require => [
+            File['/etc/pki/tls/certs/beyond79.cer'],
+            File['/etc/pki/tls/certs/beyond79.key'],
+            File['/etc/nginx/conf.d/drupal.include']
+        ],
+    }
+
+    nginx::resource::location { "beyond79-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "beyond79.com",
+         www_root        => "/var/www/b79drupal/drupal/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    nginx::resource::vhost { '*.sellyourgold.com':
+        server_name => ['*.sellyourgold.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/sellyourgold.com-access.log',
+        error_log => '/var/log/nginx/sellyourgold.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/sellyourgold.cer',
+        ssl_key => '/etc/pki/tls/certs/sellyourgold.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [
+                '/etc/nginx/conf.d/drupal.include',
+                '/etc/nginx/conf.d/goldtrack.include'
+            ],
+         },
+        require => [
+            File['/etc/pki/tls/certs/sellyourgold.cer'],
+            File['/etc/pki/tls/certs/sellyourgold.key'],
+            File['/etc/nginx/conf.d/drupal.include'],
+            File['/etc/nginx/conf.d/goldtrack.include']
+        ],
+    }
+
+    nginx::resource::location { "sellyourgold-php":
+             ensure          => present,
+             ssl             => true,
+             ssl_only        => true,
+             vhost           => "*.sellyourgold.com",
+             www_root        => "/var/www/b79drupal/drupal/",
+             location        => '~ \.php$',
+             index_files     => ['index.php', 'index.html', 'index.htm'],
+             fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+             fastcgi_script  => undef
+       }
+
+    file { '/etc/pki/tls/certs/sellyourgold.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/sellyourgold.cer',
+        require => Package['nginx'],
+    }
+
+    file { '/etc/pki/tls/certs/sellyourgold.key':
+        ensure => present,
+        source => 'puppet:///files/certs/sellyourgold.key',
+    }
+
+    nginx::resource::vhost { '*.thingswebuy.com':
+        server_name => ['*.thingswebuy.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/thingswebuy.com-access.log',
+        error_log => '/var/log/nginx/thingswebuy.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/thingswebuy.cer',
+        ssl_key => '/etc/pki/tls/certs/thingswebuy.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [ '/etc/nginx/conf.d/drupal.include', '/etc/nginx/conf.d/goldtrack.include' ],
+        },
+        require => [
+            File['/etc/pki/tls/certs/thingswebuy.cer'],
+            File['/etc/pki/tls/certs/thingswebuy.key'],
+            File['/etc/nginx/conf.d/drupal.include'],
+            File['/etc/nginx/conf.d/goldtrack.include']
+        ],
+    }
+
+    nginx::resource::location { "thingswebuy-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "*.thingswebuy.com",
+         www_root        => "/var/www/b79drupal/drupal/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    file { '/etc/pki/tls/certs/thingswebuy.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/thingswebuy.cer',
+    }
+
+    file { '/etc/pki/tls/certs/thingswebuy.key':
+        ensure => present,
+        source => 'puppet:///files/certs/thingswebuy.key',
+    }
+
+    nginx::resource::vhost { '*.goldkit.com':
+        server_name => ['*.goldkit.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/goldkit.com-access.log',
+        error_log => '/var/log/nginx/goldkit.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/goldkit.cer',
+        ssl_key => '/etc/pki/tls/certs/goldkit.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [
+                '/etc/nginx/conf.d/drupal.include',
+                '/etc/nginx/conf.d/goldtrack.include'
+            ],
+        },
+        require => [
+            File['/etc/pki/tls/certs/goldkit.cer'],
+            File['/etc/pki/tls/certs/goldkit.key'],
+            File['/etc/nginx/conf.d/drupal.include'],
+            File['/etc/nginx/conf.d/goldtrack.include']
+        ],
+    }
+
+    nginx::resource::location { "goldkit-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "*.goldkit.com",
+         www_root        => "/var/www/b79drupal/drupal/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    file { '/etc/pki/tls/certs/goldkit.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/goldkit.cer',
+    }
+
+    file { '/etc/pki/tls/certs/goldkit.key':
+        ensure => present,
+        source => 'puppet:///files/certs/goldkit.key',
+    }
+
+    nginx::resource::vhost { '*.recycleplatinum.com':
+        server_name => ['*.recycleplatinum.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/recycleplatinum.com-access.log',
+        error_log => '/var/log/nginx/recycleplatinum.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/recycleplatinum.cer',
+        ssl_key => '/etc/pki/tls/certs/recycleplatinum.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [
+                '/etc/nginx/conf.d/drupal.include',
+                '/etc/nginx/conf.d/goldtrack.include'
+            ],
+        },
+        require => [
+            File['/etc/pki/tls/certs/recycleplatinum.cer'],
+            File['/etc/pki/tls/certs/recycleplatinum.key'],
+            File['/etc/nginx/conf.d/drupal.include'],
+            File['/etc/nginx/conf.d/goldtrack.include']
+        ],
+    }
+
+    nginx::resource::location { "recycleplatinum-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "*.recycleplatinum.com",
+         www_root        => "/var/www/b79drupal/drupal/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    file { '/etc/pki/tls/certs/recycleplatinum.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/recycleplatinum.cer',
+    }
+
+    file { '/etc/pki/tls/certs/recycleplatinum.key':
+        ensure => present,
+        source => 'puppet:///files/certs/recycleplatinum.key',
+    }
+
+    nginx::resource::vhost { '*.outofyourlife.com':
+        server_name => ['*.outofyourlife.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/outofyourlife.com-access.log',
+        error_log => '/var/log/nginx/outofyourlife.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/outofyourlife.cer',
+        ssl_key => '/etc/pki/tls/certs/outofyourlife.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [
+                '/etc/nginx/conf.d/drupal.include',
+                '/etc/nginx/conf.d/goldtrack.include'
+            ],
+        },
+        require => [
+            File['/etc/pki/tls/certs/outofyourlife.cer'],
+            File['/etc/pki/tls/certs/outofyourlife.key'],
+            File['/etc/nginx/conf.d/drupal.include'],
+            File['/etc/nginx/conf.d/goldtrack.include']
+        ],
+    }
+
+    file { '/etc/pki/tls/certs/outofyourlife.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/outofyourlife.cer',
+    }
+
+    file { '/etc/pki/tls/certs/outofyourlife.key':
+        ensure => present,
+        source => 'puppet:///files/certs/outofyourlife.key',
+    }
+
+    nginx::resource::location { "outofyourlife-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "*.outofyourlife.com",
+         www_root        => "/var/www/b79drupal/drupal/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    nginx::resource::vhost { '*.elitediamondbuyers.com':
+        server_name => ['*.elitediamondbuyers.com'],
+        www_root => '/var/www/b79drupal/drupal/',
+        access_log => '/var/log/nginx/elitediamondbuyers.com-access.log',
+        error_log => '/var/log/nginx/elitediamondbuyers.com-error.log',
+        ssl => true,
+        ssl_cert => '/etc/pki/tls/certs/elitediamondbuyers.cer',
+        ssl_key => '/etc/pki/tls/certs/elitediamondbuyers.key',
+        listen_port => 443,
+        ssl_port => 443,
+        try_files => ['$uri', '/index.php?$query_string'],
+        index_files     => ['index.php', 'index.html', 'index.htm'],
+        vhost_cfg_append => {
+            'include' => [
+                '/etc/nginx/conf.d/drupal.include',
+                '/etc/nginx/conf.d/goldtrack.include'
+            ],
+        },
+        require => [
+            File['/etc/pki/tls/certs/elitediamondbuyers.cer'],
+            File['/etc/pki/tls/certs/elitediamondbuyers.key'],
+            File['/etc/nginx/conf.d/drupal.include'],
+            File['/etc/nginx/conf.d/goldtrack.include']
+        ],
+    }
+
+    nginx::resource::location { "*.elitediamondbuyers-php":
+         ensure          => present,
+         ssl             => true,
+         ssl_only        => true,
+         vhost           => "*.elitediamondbuyers.com",
+         www_root        => "/var/www/b79drupal/drupal/",
+         location        => '~ \.php$',
+         index_files     => ['index.php', 'index.html', 'index.htm'],
+         fastcgi         => "unix:/var/run/php-fpm/php-fpm.sock",
+         fastcgi_script  => undef
+   }
+
+    file { '/etc/pki/tls/certs/elitediamondbuyers.cer':
+        ensure => present,
+        source => 'puppet:///files/certs/elitediamondbuyers.cer',
+    }
+
+    file { '/etc/pki/tls/certs/elitediamondbuyers.key':
+        ensure => present,
+        source => 'puppet:///files/certs/elitediamondbuyers.key',
+    }
+    # end nginx
+
+    # mariadb
+    class { '::mysql::server':
+        root_password => 'g0ld13l0cks',
+        remove_default_accounts => true
+    }
+
+    mysql::db { 'd7_b79':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_b79',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_b79.sql',
+    }
+
+    mysql::db { 'd7_syg':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_syg',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_syg.sql',
+    }
+
+    mysql::db { 'd7_gk':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_gk',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_gk.sql',
+    }
+
+    mysql::db { 'd7_edb':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_edb',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_edb.sql',
+    }
+
+    mysql::db { 'd7_rp':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_rp',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_rp.sql',
+    }
+
+    mysql::db { 'd7_ooyl':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_ooyl',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_ooyl.sql',
+    }
+
+    mysql::db { 'd7_twb':
+        user => 'd7',
+        password => 'drupal',
+        dbname => 'd7_twb',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/d7_twb.sql',
+    }
+
+    mysql::db { 'goldexchange':
+        user => 'goldexchange',
+        password => 'g0ld13l0cks',
+        dbname => 'goldexchange',
+        host => 'localhost',
+        grant => ['ALL'],
+        sql => '/files/databases/goldexchange.sql',
+    }
+    #end mariadb
+
+    # event store
+    include packagecloud
+
+    packagecloud::repo { "EventStore/EventStore-OSS":
+        type => 'rpm',  # or "deb" or "gem"
+    }
+    # end event store
+
+}

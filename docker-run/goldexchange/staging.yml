@@ -1,0 +1,25 @@
+nginx:
+  image: urldigital.com/beyond79/nginx:staging
+  container_name: goldexchange_nginx
+  ports:
+    - 9001:443
+    - 9002:80
+  links:
+    - goldexchange
+  volumes_from:
+    - goldexchange
+  volumes:
+    - ../src/www:/var/www
+    - /storage/resources:/var/www/goldexchangeapi.com/resources
+    - ./conf.d:/etc/nginx/conf.d
+
+goldexchange:
+  image: urldigital.com/beyond79/goldexchange:staging
+  container_name: goldexchange
+  volumes:
+    - ../src/www:/var/www
+    - ./staging.b79api.env:/var/www/b79api/.env
+    - /storage/resources:/var/www/goldexchangeapi.com/resources
+    - ./php-fpm.d:/etc/php-fpm.d
+  env_file:
+    - staging.goldexchange.env

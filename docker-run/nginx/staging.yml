@@ -1,0 +1,11 @@
+nginx:
+  image: urldigital.com/beyond79/nginx:staging
+  container_name: nginx
+  restart: always
+  ports:
+    - 80:80
+    - 443:443
+  volumes:
+    - ./certs:/etc/ssl
+    - ./conf.d:/etc/nginx/conf.d
+    - ./staging.nginx.conf:/etc/nginx/nginx.conf

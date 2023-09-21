@@ -1,0 +1,6 @@
+# this is evil and there isn't much we can do about it
+# @see http://stackoverflow.com/questions/15713934/how-to-match-question-mark-as-regexp-on-nginx-conf-location
+location ~ /faqs_answers {
+  # all /faqs_answers should go to /faqs
+  return 301 /faqs;
+}

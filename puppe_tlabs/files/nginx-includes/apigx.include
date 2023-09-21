@@ -1,0 +1,4 @@
+location /img/kits {
+    rewrite ^/img/kits(.*)$ $1 break;
+    root /var/www/goldexchangeapi.com/resources/kits;
+}

@@ -1,0 +1,66 @@
+DB_USER=goldexchange
+DB_USERNAME=goldexchange
+DB_PASSWORD=g0ld13l0cks
+DB_HOST=dbmaster
+DB_NAME=goldexchange
+DB_DATABASE=goldexchange
+APPLICATION_ENV=live
+wmc_api_url=https://api.webmasterchecks.com/
+wmc_api_client_id=205
+wmc_api_akey=kHDWbH/wsGlIyjqxEai7Fs42i8HHkXyUscYyqV+wB1k+HOvyVj4sJZYKE1lS/Fv6tTrGmdOnfqQukPO0/FXzRRNMv9IziS1WAYzld8Q/2Et85zxzF6uyfwC54XHQHAxC
+paypal_api_url=https://svcs.paypal.com/AdaptivePayments/
+paypal_app_id=APP-8RW10306NM684840R
+paypal_api_username=paypal_api1.beyond79.com
+paypal_api_password=94KUVT84WVC5D7GN
+paypal_api_key=AN3yjmAmdrHdk6GwO8PRVH9WPE-9A.O6q6C7eXJqKqjSWFWoiU2NlPDv
+paypal_api_email=paypal@beyond79.com
+paypal_sender_email=paypal@beyond79.com
+
+MAILTO=""
+
+*/5 *  *  *  * chown -R php-fpm:php-fpm /var/www/goldexchangeapi.com/resources/kits
+* * * * * php-fpm php /var/www/goldexchangeapi.com/cron/Cron.php newcustomer 0
+
+#0 10 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php holidayemailblast 0
+* * * * 1-5 php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php paymentapproval 0
+0 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php paymentemail 0
+#0 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php phonedaddyimport 0
+5 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php paycustomers 0 >> /tmp/payments
+0 */12 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php offerready 0
+0 * * * 1-5 php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php autoaccept 0
+0 5 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php dailyreport 0
+#30 23 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php test 0
+05 10 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php marketupdate 0
+#10 10 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php actualvalue 0
+0 7 * * 1-5 php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php settleorders 0
+0 4 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php quickship 0
+0 1 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php impactradius 0
+0 2 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php infusionsoft 0
+0 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php campaignattribution 0
+20,50 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php trackingattribution 0
+30 1 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php pepperjam 0
+15 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php processvisitreport 0
+15 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php processvisitsearchreport 0
+0 9 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php reviewspost 0
+#40 8 * * 1-5 php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php ironmountain 0
+#55 11 * * 1-5 php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php ironmountain 0
+0 */6 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php adminemails 0
+#0 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php ironmountainfedex 0
+0 * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php wheatenimport 0
+#0 8 1 * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php terracycle 0
+#*/5 * * * * /usr/local/awstats/wwwroot/cgi-bin/awstats.pl -update -config=www.sellyourgold.com
+#0 4,6,12 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php ryanreport 0
+# Journeys report is now generated on dbm1 directly in MySQL
+#45 */4 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php journeysreport 0
+0 4 * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php shipments 0 14
+* * * * * php-fpm /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php returnedemail 0
+
+* */24 * * * php-fpm /usr/bin/php /var/www/b79drupal/scripts/cache_heater.php www.sellyourgold.com
+* */24 * * * php-fpm /usr/bin/php /var/www/b79drupal/scripts/cache_heater.php www.thingswebuy.com
+* */24 * * * php-fpm /usr/bin/php /var/www/b79drupal/scripts/cache_heater.php www.goldkit.com
+* */24 * * * php-fpm /usr/bin/php /var/www/b79drupal/scripts/cache_heater.php www.elitediamondbuyers.com
+* */24 * * * php-fpm /usr/bin/php /var/www/b79drupal/scripts/cache_heater.php www.recycleplatinum.com
+* */24 * * * php-fpm /usr/bin/php /var/www/b79drupal/scripts/cache_heater.php www.outofyourlife.com
+
+# Drupal cron
+0 */24 * * * /bin/bash /var/scripts/cron.sh

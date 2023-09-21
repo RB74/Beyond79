@@ -1,0 +1,14 @@
+db_master:
+  image: urldigital.com/beyond79/mariadb
+  container_name: dbmaster
+  restart: always
+  ports:
+    - "3306:3306"
+  volumes:
+    - /mnt/mysql/data:/var/lib/mysql
+    - /mnt/mysql/backup:/backup
+    - /mnt/mysql/databases:/databases
+    - /mnt/mysql/scripts:/scripts
+    - ./src/configs/mysql/master.d:/etc/my.cnf.d
+  environment:
+    - MYSQL_ROOT_PASSWORD=g0ld13l0cks

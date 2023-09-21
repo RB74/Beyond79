@@ -1,0 +1,35 @@
+nginx:
+  image: urldigital.com/beyond79/nginx:prod
+  container_name: goldexchange_nginx
+  restart: always
+  extra_hosts:
+    - secure.goldexchangeapi.com:172.31.11.107
+    - api.beyond79.com:172.31.11.107
+  ports:
+    - 9001:443
+    - 9002:80
+  links:
+    - goldexchange
+  volumes:
+    - ../src/www:/var/www
+    - /storage/resources:/var/www/goldexchangeapi.com/resources
+    - ./conf.d:/etc/nginx/conf.d
+
+goldexchange:
+  image: urldigital.com/beyond79/goldexchange:prod
+  container_name: goldexchange
+  restart: always
+  extra_hosts:
+    - secure.goldexchangeapi.com:172.31.11.107
+    - api.beyond79.com:172.31.11.107
+    - dbmaster:172.31.10.118
+  volumes:
+    - ../src/www:/var/www
+    - ./production.b79api.env:/var/www/b79api/.env
+    - /storage/resources/kits:/var/www/goldexchangeapi.com/resources/kits
+    - ./php-fpm.d:/etc/php-fpm.d
+    - ./production.ssmtp.conf:/etc/ssmtp/ssmtp.conf
+    - ./production.newrelic.ini:/etc/php.d/newrelic.ini
+    - /tmp/.newrelic.sock:/tmp/.newrelic.sock
+  env_file:
+    - production.goldexchange.env

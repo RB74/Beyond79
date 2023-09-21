@@ -1,0 +1,10 @@
+# user accounts
+accounts::user_defaults:
+  purge_ssh_keys: true
+accounts::users:
+  printmanager:
+      groups: ['users']
+      ssh_keys:
+        'printmanager@B79PRINTMNGR01.Beyond79.com':
+          type: 'ssh-rsa'
+          key: 'AAAAB3NzaC1yc2EAAAABJQAAAQB5x6UqqbUvhxGSR+WO6+bhbMdMq3rTzonDqqlaFiYYozBWVOP698XHnCQc8iJQ/+8ZVnDUb1+YU/nZiyed6XPuKnjC0jOkIlT1//g9K2uhx3XKp8iWDLc+T9ygreC+DnMYnnvglcienyNhI7Rs61n1+J7gBBrSdyPPItLmSxzLzVmLaIve+g/gDxR2GrnLxO0sGXLw79Bwd9xl/Y+a6JnZqXuta/4iNaif4ByXyoOdTRHU9bcau5h1/PKglyG0B6dkrJ5B0ELsEtz/j8eUDrTLy4fAR89Naknvbg6mQSWI81f37AvElSLGnnImAF+8m2+Y3w7RxaAj8noXeJiZJTmF'

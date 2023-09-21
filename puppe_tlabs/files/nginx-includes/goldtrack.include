@@ -1,0 +1,37 @@
+  location /goldtrack {
+    root /var/www/goldtrack/public;
+    try_files $uri /index.php?q=$uri&$args;
+    sendfile off;
+
+    ## Check for file existing and if there, stop ##
+    if (-f $request_filename) {
+      break;
+    }
+
+    ## Check for file existing and if there, stop ##
+    if (-d $request_filename) {
+      break;
+    }
+
+    location ~* \.(js|jpg|png|gif|css)$ {
+      expires max;
+    }
+
+    ## If we get here then there is no file or directory matching request_filename ##
+    rewrite  ^/(.*)$  /goldtrack/index.php?q=$1 last;
+
+    location ~ /goldtrack/(.*\.php)$ {
+      fastcgi_index index.php;
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME $document_root/$1;
+      fastcgi_connect_timeout 5;
+      fastcgi_send_timeout 300;
+      fastcgi_read_timeout 300;
+      fastcgi_buffer_size 128k;
+      fastcgi_buffers 4 256k;
+      fastcgi_busy_buffers_size 256k;
+      fastcgi_temp_file_write_size 256k;
+      fastcgi_intercept_errors on;
+      fastcgi_pass unix:/var/run/php-fpm/php-fpm.sock;
+    }
+  }

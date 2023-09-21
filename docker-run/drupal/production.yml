@@ -1,0 +1,53 @@
+nginx:
+  image: urldigital.com/beyond79/nginx:prod
+  container_name: drupal_nginx
+  restart: always
+  extra_hosts:
+    - api.beyond79.com:172.31.11.107
+    - secure.goldexchangeapi.com:172.31.11.107
+  ports:
+    - 9000:443
+  links:
+    - drupal
+  volumes_from:
+    - drupal
+  volumes:
+    - ../src/www:/var/www
+    - /storage/site-files/beyond79.com/files:/var/www/b79drupal/drupal/sites/beyond79.com/files
+    - /storage/site-files/sellyourgold.com/files:/var/www/b79drupal/drupal/sites/sellyourgold.com/files
+    - /storage/site-files/recycleplatinum.com/files:/var/www/b79drupal/drupal/sites/recycleplatinum.com/files
+    - /storage/site-files/elitediamondbuyers.com/files:/var/www/b79drupal/drupal/sites/elitediamondbuyers.com/files
+    - /storage/site-files/goldkit.com/files:/var/www/b79drupal/drupal/sites/goldkit.com/files
+    - /storage/site-files/outofyourlife.com/files:/var/www/b79drupal/drupal/sites/outofyourlife.com/files
+    - /storage/site-files/thingswebuy.com/files:/var/www/b79drupal/drupal/sites/thingswebuy.com/files
+    - /storage/site-files/d7.com/files:/var/www/b79drupal/drupal/sites/d7.com/files
+    - /storage/resources/kits:/var/www/goldexchangeapi.com/resources/kits
+    - ./conf.d:/etc/nginx/conf.d
+    - ./production.nginx.conf:/etc/nginx/nginx.conf
+
+drupal:
+  image: urldigital.com/beyond79/drupal:prod
+  container_name: drupal
+  restart: always
+  extra_hosts:
+    - api.beyond79.com:172.31.11.107
+    - secure.goldexchangeapi.com:172.31.11.107
+    - dbmaster:172.31.10.118
+    - memcached:172.31.7.110
+  volumes:
+    - ../src/www:/var/www
+    - /storage/site-files/beyond79.com/files:/var/www/b79drupal/drupal/sites/beyond79.com/files
+    - /storage/site-files/sellyourgold.com/files:/var/www/b79drupal/drupal/sites/sellyourgold.com/files
+    - /storage/site-files/recycleplatinum.com/files:/var/www/b79drupal/drupal/sites/recycleplatinum.com/files
+    - /storage/site-files/elitediamondbuyers.com/files:/var/www/b79drupal/drupal/sites/elitediamondbuyers.com/files
+    - /storage/site-files/goldkit.com/files:/var/www/b79drupal/drupal/sites/goldkit.com/files
+    - /storage/site-files/outofyourlife.com/files:/var/www/b79drupal/drupal/sites/outofyourlife.com/files
+    - /storage/site-files/thingswebuy.com/files:/var/www/b79drupal/drupal/sites/thingswebuy.com/files
+    - /storage/site-files/d7.com/files:/var/www/b79drupal/drupal/sites/d7.com/files
+    - /storage/resources/kits:/var/www/goldexchangeapi.com/resources/kits
+    - ./php-fpm.d:/etc/php-fpm.d
+    - ./production.ssmtp.conf:/etc/ssmtp/ssmtp.conf
+    - ./production.newrelic.ini:/etc/php.d/newrelic.ini
+    - /tmp/.newrelic.sock:/tmp/.newrelic.sock
+  env_file:
+    - production.drupal.env

@@ -1,0 +1,63 @@
+SHELL=/bin/bash
+
+DB_USER=goldexchange
+DB_USERNAME=goldexchange
+DB_PASSWORD=g0ld13l0cks
+DB_HOST=production-goldexchange.cs4ybiuq7yk8.us-west-2.rds.amazonaws.com
+DB_NAME=goldexchange
+DB_DATABASE=goldexchange
+APPLICATION_ENV=production
+MEMCACHED_HOST=nfscache.beyond79.com:11211
+#Payments info
+wmc_api_url=https://api.webmasterchecks.com/
+wmc_api_client_id=205
+wmc_api_akey=tiUVJ+XW8Hgp29phhY8AKHLvT/N+EkvAlPIFNm0er8QecNDM8hXahKodEyKeJeuMr4fK5Y9HCWXLHmkdsU0a5M9vhw6jxSWmR7fiWxdg5rM4GovkRi218h98v6vURKan
+paypal_api_url=https://svcs.paypal.com/AdaptivePayments/
+paypal_app_id=APP-8RW10306NM684840R
+paypal_api_username=paypal_api1.beyond79.com
+paypal_api_password=94KUVT84WVC5D7GN
+paypal_api_key=AN3yjmAmdrHdk6GwO8PRVH9WPE-9A.O6q6C7eXJqKqjSWFWoiU2NlPDv
+paypal_api_email=paypal@beyond79.com
+paypal_sender_email=paypal@beyond79.com
+
+#EventStore
+ES_CONNECTION_URI=http://admin:changeit@172.31.8.50:2113
+
+# Name: newcustomer
+* * * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php newcustomer 0
+# Name: returningcustomers
+* * * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php returningcustomers 0
+# Name: convertcustomers
+*/5 * * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php convertcustomers 0
+# Name: invalidrequests
+*/15 * * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php invalidrequests 0
+# Name: paymentapproval
+* * * * 1-5 nginx php /var/www/goldexchangeapi.com/cron/Cron.php paymentapproval 0
+# Name: paymentemail
+0 * * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php paymentemail 0
+# Name: paycustomers
+5 * * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php paycustomers 0
+# Name: offerready
+0 */12 * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php offerready 0
+# Name: autoaccept
+0 * * * 1-5 nginx php /var/www/goldexchangeapi.com/cron/Cron.php autoaccept 0
+# Name: dailyreport
+0 5 * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php dailyreport 0
+# Name: marketupdate
+5 10 * * * nginx php /var/www/goldexchangeapi.com/cron/Cron.php marketupdate 0
+# Name: settleorders
+0 7 * * 1-5 nginx php /var/www/goldexchangeapi.com/cron/Cron.php settleorders 0
+# Name: returnedemail
+0 7 * * 1-5 nginx php /var/www/goldexchangeapi.com/cron/Cron.php returnedemail 0
+# Name: fiveninecampaigns
+*/5 * * * * nginx /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php fiveninecampaigns 0
+# Name: fiveninekitrequests
+*/15 * * * * nginx /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php fiveninekitrequests 0
+# Name: fivenineofferdeclined
+*/5 * * * * nginx /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php fivenineofferdeclined 0
+# Name: fivenineofferready
+0 8 * * * nginx /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php fivenineofferready 0
+# Name: fiveninenonconvertedkitrequests
+0 8 * * * nginx /usr/bin/php /var/www/goldexchangeapi.com/cron/Cron.php fiveninenonconvertedkitrequests 0
+# Name: trustsequenceemails
+0 14 * * 1-5 nginx php /var/www/goldexchangeapi.com/cron/Cron.php trustsequenceemails 0

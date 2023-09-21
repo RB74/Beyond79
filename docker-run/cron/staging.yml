@@ -1,0 +1,7 @@
+cron:
+  image: urldigital.com/beyond79/cron:staging
+  container_name: cron
+  volumes:
+    - ../src/www:/var/www
+    - ./staging.crontab:/etc/crontab
+    - /storage/resources:/var/www/goldexchangeapi.com/resources

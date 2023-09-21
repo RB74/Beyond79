@@ -1,0 +1,60 @@
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+# Settings user and group are ignored when systemd is used.
+# If you need to run mysqld under a different user or group,
+# customize your systemd unit file for mariadb according to the
+# instructions in http://fedoraproject.org/wiki/Systemd
+
+skip_external_locking = 1
+skip_name_resolve = 1
+open_files_limit  = 200000
+
+max_allowed_packet=64M
+
+# a tmpfs parition at /mnt/ramdisk must be present for this to work
+tmpdir=/mnt/ramdisk
+
+# query logging
+slow_query_log=1
+long_query_time=1
+log_queries_not_using_indexes=1
+
+# query cache
+query_cache_size=64M
+query_cache_limit=1M
+
+# server tuning
+join_buffer_size=4M
+
+# myiasm tuning
+tmp_table_size=32M
+max_heap_table_size=32M
+thread_cache_size=4
+table_cache=64
+table_open_cache=256
+# todo - determine key, read and join buffer sizes
+
+# innodb tuning
+innodb_buffer_pool_instances=2
+innodb_buffer_pool_size=256M
+#innodb_log_file_size=2048MB
+#innodb_log_buffer_size=8M
+innodb_flush_log_at_trx_commit=1
+innodb_flush_method=O_DIRECT
+innodb_thread_concurrency=2
+
+[mysqld_safe]
+log-error=/var/log/mariadb/mariadb.log
+pid-file=/var/run/mariadb/mariadb.pid
+
+[mysqldump]
+quick
+max_allowed_packet=16M
+
+#
+# include all files from the config directory
+#
+!includedir /etc/my.cnf.d

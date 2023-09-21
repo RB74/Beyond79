@@ -1,0 +1,83 @@
+# this is evil and there isn't much we can do about it
+# @see http://stackoverflow.com/questions/15713934/how-to-match-question-mark-as-regexp-on-nginx-conf-location
+location ~ /faqs_answers {
+  if ($arg_q = 1) {
+    return 301 /content/what-are-you-paying-gold;
+  }
+  if ($arg_q = 2) {
+    return 301 /content/what-type-items-does-sellyourgoldcom-buy;
+  }
+  if ($arg_q = 3) {
+    return 301 /content/how-long-does-process-take;
+  }
+  if ($arg_q = 4) {
+    return 301 /content/how-long-after-you-receive-my-package-should-i-expect-offer;
+  }
+  if ($arg_q = 5) {
+    return 301 /content/after-i-accept-my-offer-how-long-does-it-take-get-paid;
+  }
+  if ($arg_q = 6) {
+    return 301 /content/do-you-have-any-storefront-locations;
+  }
+  if ($arg_q = 7) {
+    return 301 /content/how-do-i-know-my-items-are-safe;
+  }
+  if ($arg_q = 8) {
+    return 301 /content/my-shipment-insured;
+  }
+  if ($arg_q = 9) {
+    return 301 /content/what-if-i-am-sending-bulky-or-highly-valuable-items;
+  }
+  if ($arg_q = 10) {
+    return 301 /content/how-do-i-know-if-my-item-real-gold-silver-or-platinum;
+  }
+  if ($arg_q = 11) {
+      return 301 /content/appraisal-kit-free;
+    }
+    if ($arg_q = 12) {
+      return 301 /content/what-are-my-payment-options;
+    }
+    if ($arg_q = 13) {
+      return 301 /content/what-if-i-do-not-my-offer-do-i-have-pay-my-items-be-returned;
+    }
+    if ($arg_q = 14) {
+      return 301 /content/what-happens-if-i-am-unhappy-amount-my-offer-and-i-want-my-items-back;
+    }
+    if ($arg_q = 15) {
+      return 301 /content/can-i-change-my-payment-method;
+    }
+    if ($arg_q = 16) {
+      return 301 /content/what-common-jewelry-items-do-you-not-buy;
+    }
+    if ($arg_q = 17) {
+      return 301 /content/how-do-i-know-if-my-item-real-gold-silver-or-platinum;
+    }
+    if ($arg_q = 18) {
+      return 301 /content/do-you-buy-gold-filled-or-gold-plated-items;
+    }
+    if ($arg_q = 19) {
+      return 301 /content/do-you-buy-gold-computers;
+    }
+    if ($arg_q = 20) {
+      return 301 /content/do-you-place-value-gemstones;
+    }
+    if ($arg_q = 21) {
+      return 301 /content/do-you-buy-diamonds;
+    }
+    if ($arg_q = 22) {
+      return 301 /content/do-you-buy-silver;
+    }
+    if ($arg_q = 23) {
+      return 301 /content/do-you-accept-dental-gold;
+    }
+    if ($arg_q = 24) {
+      return 301 /content/i-have-some-rings-might-be-white-gold-do-you-buy;
+    }
+    #if ($arg_q = 25) {
+    #  return 301 /content/after-i-accept-my-offer-how-long-does-it-take-get-paid;
+    #}
+    if ($arg_q = 26) {
+      return 301 /content/do-you-buy-coins;
+    }
+    return 301 /faqs;
+}

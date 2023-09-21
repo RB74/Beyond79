@@ -1,0 +1,101 @@
+# /etc/profile
+
+# System wide environment and startup programs, for login setup
+# Functions and aliases go in /etc/bashrc
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
+}
+
+
+if [ -x /usr/bin/id ]; then
+    if [ -z "$EUID" ]; then
+        # ksh workaround
+        EUID=`id -u`
+        UID=`id -ru`
+    fi
+    USER="`id -un`"
+    LOGNAME=$USER
+    MAIL="/var/spool/mail/$USER"
+fi
+
+# Path manipulation
+if [ "$EUID" = "0" ]; then
+    pathmunge /usr/sbin
+    pathmunge /usr/local/sbin
+else
+    pathmunge /usr/local/sbin after
+    pathmunge /usr/sbin after
+fi
+
+HOSTNAME=`/usr/bin/hostname 2>/dev/null`
+HISTSIZE=1000
+if [ "$HISTCONTROL" = "ignorespace" ] ; then
+    export HISTCONTROL=ignoreboth
+else
+    export HISTCONTROL=ignoredups
+fi
+
+export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL
+
+# By default, we want umask to get set. This sets it for login shell
+# Current threshold for system reserved uid/gids is 200
+# You could check uidgid reservation validity in
+# /usr/share/doc/setup-*/uidgid file
+if [ $UID -gt 199 ] && [ "`id -gn`" = "`id -un`" ]; then
+    umask 002
+else
+    umask 022
+fi
+
+for i in /etc/profile.d/*.sh ; do
+    if [ -r "$i" ]; then
+        if [ "${-#*i}" != "$-" ]; then
+            . "$i"
+        else
+            . "$i" >/dev/null
+        fi
+    fi
+done
+
+unset i
+unset -f pathmunge
+
+export DB_USER=goldexchange
+export DB_USERNAME=goldexchange
+export DB_PASSWORD=g0ld13l0cks
+export DB_HOST=production-goldexchange.cs4ybiuq7yk8.us-west-2.rds.amazonaws.com
+export DB_NAME=goldexchange
+export DB_DATABASE=goldexchange
+export APPLICATION_ENV=production
+export MEMCACHED_HOST=nfscache.beyond79.com
+export MEMCACHED_PORT=11211
+#Payments info
+export wmc_api_url=https://api.webmasterchecks.com/
+export wmc_api_client_id=205
+export wmc_api_akey=tiUVJ+XW8Hgp29phhY8AKHLvT/N+EkvAlPIFNm0er8QecNDM8hXahKodEyKeJeuMr4fK5Y9HCWXLHmkdsU0a5M9vhw6jxSWmR7fiWxdg5rM4GovkRi218h98v6vURKan
+export paypal_api_url=https://svcs.paypal.com/AdaptivePayments/
+export paypal_app_id=APP-8RW10306NM684840R
+export paypal_api_username=paypal_api1.beyond79.com
+export paypal_api_password=94KUVT84WVC5D7GN
+export paypal_api_key=AN3yjmAmdrHdk6GwO8PRVH9WPE-9A.O6q6C7eXJqKqjSWFWoiU2NlPDv
+export paypal_api_email=paypal@beyond79.com
+export paypal_sender_email=paypal@beyond79.com
+
+#EventStore
+export ES_CONNECTION_URI=http://admin:changeit@172.31.8.50:2113
+export MAILTO="devops@urldigital.com"

@@ -1,0 +1,25 @@
+index index.php index.html;
+charset utf-8;
+gzip_static on;
+
+# find our browser tab
+location = /favicon.ico {
+    access_log off;
+}
+
+# beep boop beep
+location = /robots.txt {
+    allow all;
+    access_log off;
+}
+
+# block access to log files
+location ~* \.(txt|log)$ {
+    allow 127.0.0.1;
+    deny all;
+}
+
+# block access to php files directly
+location ~ \..*/.*\.php {
+    return 403;
+}

@@ -1,0 +1,4 @@
+php::settings:
+  PHP/auto_prepend_file: '/var/www/auto_prepend_file.php'
+php::fpm::settings:
+  PHP/auto_prepend_file: '/var/www/auto_prepend_file.php'

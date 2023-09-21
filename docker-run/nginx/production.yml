@@ -1,0 +1,13 @@
+nginx:
+  image: urldigital.com/beyond79/nginx:prod
+  container_name: nginx
+  restart: always
+  extra_hosts:
+    - host:172.31.11.107
+  ports:
+    - 80:80
+    - 443:443
+  volumes:
+    - ./certs:/etc/ssl
+    - ./conf.d:/etc/nginx/conf.d
+    - ./production.nginx.conf:/etc/nginx/nginx.conf

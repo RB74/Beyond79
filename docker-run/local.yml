@@ -1,0 +1,175 @@
+#varnish:
+#  image: urldigital.com/beyond79/varnish
+#  container_name: varnish
+#  extra_hosts:
+#    - host:192.168.99.100
+#  links:
+#    - nginx
+#  ports:
+#    - 80:80
+
+nginx:
+  image: urldigital.com/beyond79/nginx
+  container_name: nginx
+  extra_hosts:
+    - host:192.168.99.100
+    - api.beyond79.com:192.168.99.100
+    - secure.goldexchangeapi.com:192.168.99.100
+  links:
+    - goldexchange_nginx
+    - drupal_nginx
+    - wiki_nginx
+    - scale_service
+  ports:
+    - 80:80
+    - 443:443
+  volumes:
+    - ./nginx/certs:/etc/ssl
+    - ./nginx/conf.d:/etc/nginx/conf.d
+    - ./nginx/local.nginx.conf:/etc/nginx/nginx.conf
+    - ./nginx/fastcgi_params:/etc/nginx/fastcgi_params
+
+goldexchange_nginx:
+  image: urldigital.com/beyond79/nginx
+  container_name: goldexchange_nginx
+  links:
+    - goldexchange
+  volumes:
+    - ./goldexchange/conf.d:/etc/nginx/conf.d
+    - ./goldexchange/local.nginx.conf:/etc/nginx/nginx.conf
+    - ./src/www/:/var/www/
+    - ./goldexchange/fastcgi_params.txt:/etc/nginx/fastcgi_params
+
+goldexchange:
+  image: urldigital.com/beyond79/goldexchange
+  container_name: goldexchange
+  links:
+    - dbmaster
+    - nginx_ambassador:local.secure.goldexchangeapi.com
+  volumes_from:
+      - site_data
+  volumes:
+    - ./goldexchange/local.php.ini:/etc/php.ini
+    - ./goldexchange/local.b79api.env:/var/www/b79api/.env
+    - /var/www/b79api/bootstrap/cache
+    - /var/www/goldexchangeapi.com/data/cache
+    - ./goldexchange/php-fpm.d:/etc/php-fpm.d
+    - ./src/www/:/var/www/
+  env_file:
+    - ./goldexchange/local.goldexchange.env
+
+scale_service:
+  image: urldigital.com/beyond79/scale-service
+  container_name: scale_service
+
+drupal_nginx:
+  image: urldigital.com/beyond79/nginx
+  container_name: drupal_nginx
+  links:
+    - drupal
+  volumes_from:
+    - site_data
+  volumes:
+    - ./drupal/deploy.sh:/deploy.sh
+    - ./drupal/conf.d:/etc/nginx/conf.d
+    - ./drupal/local.nginx.conf:/etc/nginx/nginx.conf
+    - ./drupal/fastcgi_params.txt:/etc/nginx/fastcgi_params
+    - ./src/www/:/var/www/
+
+drupal:
+  image: urldigital.com/beyond79/drupal
+  container_name: drupal
+  links:
+    - dbmaster
+    - memcached
+    - nginx_ambassador:localapi.beyond79.com
+    - nginx_ambassador:local.secure.goldexchangeapi.com
+  volumes_from:
+      - site_data
+  volumes:
+    - ./drupal/local.php.ini:/etc/php.ini
+    - ./drupal/local.php.d/10-xdebug.ini:/etc/php.d/10-xdebug.ini
+    - ./drupal/local.php.d/10-xhprof.ini:/etc/php.d/10-xhprof.ini
+    - ./drupal/local.php-fpm.d:/etc/php-fpm.d
+    - ./src/www/:/var/www/
+  env_file:
+    - ./drupal/local.drupal.env
+
+wiki_nginx:
+  image: urldigital.com/beyond79/nginx
+  container_name: wiki_nginx
+  links:
+    - wiki
+  volumes_from:
+      - site_data
+  volumes:
+    - ./wiki/conf.d:/etc/nginx/conf.d
+
+wiki:
+  image: urldigital.com/beyond79/wiki
+  container_name: wiki
+  volumes:
+    - ./wiki/php-fpm.d:/etc/php-fpm.d
+    - ./src/www/:/var/www/
+
+cron:
+  image: urldigital.com/beyond79/cron
+  container_name: cron  
+  links:
+    - dbmaster
+  volumes_from:
+      - site_data
+  volumes:
+    - ./cron/local.crontab:/etc/crontab
+    - ./src/www/:/var/www/
+
+dbmaster:
+  image: urldigital.com/beyond79/mariadb
+  container_name: dbmaster
+  volumes:
+    - ./dbmaster/local.my.cnf:/etc/my.cnf
+    - ./dbmaster/backup:/backup
+    - ./dbmaster/scripts:/scripts
+    - ./dbmaster/scripts/local.grants.sql:/scripts/grants.sql
+    - ./dbmaster/databases:/databases
+    - /var/lib/mysql
+    - /mnt/ramdisk:/mnt/ramdisk
+  environment:
+    - MYSQL_ROOT_PASSWORD=mysql
+  ports:
+    - 3306:3306
+
+memcached:
+  image: memcached
+
+nginx_ambassador:
+  image: cpuguy83/docker-grand-ambassador
+  command: -name nginx
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+
+site_data:
+  image: centos:7
+  container_name: site_data
+  volumes:
+    - ./src/www:/var/www
+    - /var/www/goldexchangeapi.com/data/cache
+    - /var/www/goldexchangeapi.com/resources/kits
+    - /var/www/b79drupal/drupal/sites/beyond79.com/files
+    - /var/www/b79drupal/drupal/sites/beyond79.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/sellyourgold.com/files
+    - /var/www/b79drupal/drupal/sites/sellyourgold.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/recycleplatinum.com/files
+    - /var/www/b79drupal/drupal/sites/recycleplatinum.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/elitediamondbuyers.com/files
+    - /var/www/b79drupal/drupal/sites/elitediamondbuyers.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/goldkit.com/files
+    - /var/www/b79drupal/drupal/sites/goldkit.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/outofyourlife.com/files
+    - /var/www/b79drupal/drupal/sites/outofyourlife.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/thingswebuy.com/files
+    - /var/www/b79drupal/drupal/sites/thingswebuy.com/files/tmp
+    - /var/www/b79drupal/drupal/sites/d7.com/files
+    - /var/www/b79drupal/drupal/sites/d7.com/files/tmp
+    - /var/www/wiki/data
+    - /var/www/wiki/lib

@@ -1,0 +1,163 @@
+#
+# This file is laid out similarly as the client request would go
+#
+
+# user accounts
+accounts::user_defaults:
+  purge_ssh_keys: true
+accounts::users:
+  tcrowder:
+    groups: ['users', 'wheel']
+    ssh_keys:
+      'tcrowder@Traviss-MacBook-Pro.local':
+        type: 'ssh-rsa'
+        key: 'AAAAB3NzaC1yc2EAAAADAQABAAABAQDo68BjFBtxlDFwnGuU8mXWYZZ901peAcsPwn5cAT/0Gio8xRnFaaz63tsoP4y6HLCtAJwjhgKEtyj9khM7bbRm+KMD5Z9bpM21AYlKWY1cbfKKZZH8oXKLQaHrZNFhbbRCnGL+jLpN0wB1QnkzINEEAdtrPdnqjb1oHv8YUql2em6Iw390qrd4GFjvnAIlf0nawdrQIImMPRDOWKqW4g1tOQNxTprd1hzn8DfErA1Q0tsubSQbmT0p2S785wOsDCLggUTHScZYPf7L9wMCMAoFAiAt/1XwlQoAGS1dKOruO2mMPY3Y/ROnWifvPJqoRl+g3h6h796I+8qXu5nf0GMZ'
+  rroper:
+    groups: ['users', 'wheel']
+    ssh_keys:
+      'ryan@ryanroper.com':
+        type: 'ssh-rsa'
+        key: 'AAAAB3NzaC1yc2EAAAADAQABAAABAQDhVNCfamboX9Arzqj4Cg+l1ktH2nwqa15A/seRZimKhThfOJasSbniDuk3REkL0kPcgnei7u/5fseYXxx5+3yRg+2h1Okmi3z1llnXSnPFztVFE31cxWzU5FPtFc/wSJwL1O4JN+8VSg79ex9PY+TNV2ksOY8uNpyu7HULHHwkwrSdYr3bipVHlmFo9VtkSsduiXRtbrO6WVlfJ8jSMsqpp+LYO08BkjCphn/ddrXnWBD0cwBr7Byo1Lc6MDZw1vxIK5kW5u3SQtTFJknNDdGpuX5AghWhPn3BWwj1kRIJfjn2yBEY8T7seEgUf6F01LP9V16aGp1UuG5N4ESBT0eF'
+  kkeith:
+    groups: ['users', 'wheel']
+    ssh_keys:
+      'kkeith@Kyles-MacBook-Pro.local':
+        type: 'ssh-rsa'
+        key: 'AAAAB3NzaC1yc2EAAAADAQABAAABAQC/iczCTMGbVXIYXKTU3YmTveNgMbO1Zn8PkrphrIj9uHhi+AAKwyxMa4NNAf1mYfxjTCdE1YwwbKioBJvX9A4woDHcTRR/nYAJC1q9S4+dQYXdwsXDXOpy0H0vu48Of/bfh5A6zySP7DnQXxu59NWAU5fEnoLxIOwg93Mfqwq/hRu/qW6KlsgSn7RpDOciwhQLvnUB0xfEN5xkCp1BAGuDqNnQOB7t2fKhvM0gRwXoUngfZbpXD9Inp/9JWLqr/20ANbK3eWQZtPYOPBPSpoRYuNPR3btOyexWVSj7NHFhbg7PSq+lc0p334U7zQkOhhNZlgFnWZ6icYQyVSW3h5WF'
+  sgonzalez:
+    groups: ['users', 'wheel']
+    ssh_keys:
+      'uniacid@uniacids-macbook-pro.local':
+        type: 'ssh-rsa'
+        key: 'AAAAB3NzaC1yc2EAAAABIwAAAQEAyXpSGLNSqwKNLnjvMB6iol88T5/u2TPnEgsasvWsgJ8Y7xaApCxCvpsCGvPcp5e4pCrJ6/SlJti5twhRDfMNFxoZPpPZCLHzI9iGFntjo3AcBenqZXBYBFDDmiL3KFZXtu0AM2KWLLMSMafO1ybiGZgeY9Xjs+5iZiKyuKjywBvvZ7/nMZRYf2eEL1ac0taaB5kMReK1HV1KE4xux0yYs1waAhjPQpmvJRmV51oUnrXTDYhNFVEcHyG1o1awtVCXapeYqLvcnqOFdZ2ZKhMmcwDfTLCrCa/wpCl67FV17CqQwCsr/hpXLJQQoBiFa2748CEbRDdAbZ9QReKIzE8uFw=='
+  padams:
+    groups: ['users', 'wheel']
+    ssh_keys:
+      'padams@Erics-MacBook-Pro.local':
+        type: 'ssh-rsa'
+        key: 'AAAAB3NzaC1yc2EAAAADAQABAAABAQCs5CgjD/uWqFVwHXKQRnQWWm8ECgpbYMvspF+C1VO+u6XEPb1PonAZ812aE3l4wZY9b9nXWMEzh+V17jFw0NMnKoWk9aPQZDzkBYtRnrIs6z090KDXYxztPxxK5c9F4CLRJzpeYk7bZqnZq2QBzSBK7BiONA9EsrCMROC2u/Dfr4GpNrT3YNmYdhEHuD36M1tInuFGPsLxFM7WoUEAVjMf6ffSgQo+BBLqejUItxTVL/pTUC5ScOmV0ISwpBeeR42CzGDQwAlxvkxtqwIRp+Day14qR/4AwZB0z6bVhAaZC204AYlMAz/cK2PyCjG/j3wiC34iA/FUG0Rjz8uG1Tez'
+
+# hosts file
+hosts::host_entries:
+  'devadmin.apigx.com':
+    ip: '127.0.0.1'
+  'dev.apigx.com':
+    ip: '127.0.0.1'
+  'dev.secure.apigx.com':
+    ip: '127.0.0.1'
+  'dev.selyourgold.com':
+    ip: '127.0.0.1'
+  'dev.thingswebuy.com':
+    ip: '127.0.0.1'
+  'dev.recycleplatinum.com':
+    ip: '127.0.0.1'
+  'dev.goldkit.com':
+    ip: '127.0.0.1'
+  'dev.outofyourlife.com':
+    ip: '127.0.0.1'
+  'dev.elitediamondbuyers.com':
+    ip: '127.0.0.1'
+  'dev.beyond.com':
+    ip: '127.0.0.1'
+# Incoming request on 443 (SSL) -- Hits ELB (443:80) -> Varnish Cache (80:8081) -> Nginx (Cname Resolution) (8081:80) -> ELB (80:80) -> Web Heads (80)
+# Incoming request on 80 (Non-SSL - Redirect to SSL) -- Hits ELB (80:8080) -> Nginx (Redirect to 443) ^
+## Varnish Section
+
+## Nginx Section (Redirector and Backend CNAME resolution box - needs two ports)
+## Varnish Section (needs a port)
+## Nginx Section (port 80 Backend Web Head)
+nginx::config::sendfile: 'off'
+nginx::nginx_upstreams:
+  'php_fpm':
+    ensure: present
+    members:
+      - 'unix:/var/run/php-fpm/php-fpm.sock'
+## PHP-FPM Section
+php::ensure: latest
+php::manage_repos: true
+php::fpm: true
+php::composer: true
+php::composer::auto_update: true
+php::pear: true
+php::phpunit: true
+php::fpm::config::log_level: notice
+php::fpm::config::user: nginx
+php::fpm::config::group: nginx
+php::fpm::pools:
+  www:
+    listen: '/var/run/php-fpm/php-fpm.sock'
+    listen_owner: nginx
+    listen_group: nginx
+    env_value:
+      APPLICATION_ENV: 'dev'
+      GX_BASE_URL: 'http://dev.secure.apigx.com'
+      EDB_DB_NAME: 'd7_edb'
+      EDB_DB_USER: 'd7'
+      EDB_DB_PASSWORD: 'drupal'
+      EDB_DB_HOST: 'localhost'
+      EDB_DB_DRIVER: 'mysql'
+      EDB_MEMCACHED_HOST: 'localhost:11211'
+      GK_DB_NAME: 'd7_gk'
+      GK_DB_USER: 'd7'
+      GK_DB_PASSWORD: 'drupal'
+      GK_DB_HOST: 'localhost'
+      GK_DB_DRIVER: 'mysql'
+      GK_MEMCACHED_HOST: 'localhost:11211'
+      OOYL_DB_NAME: 'd7_ooyl'
+      OOYL_DB_USER: 'd7'
+      OOYL_DB_PASSWORD: 'drupal'
+      OOYL_DB_HOST: 'localhost'
+      OOYL_DB_DRIVER: 'mysql'
+      OOYL_MEMCACHED_HOST: 'localhost:11211'
+      RP_DB_NAME: 'd7_rp'
+      RP_DB_USER: 'd7'
+      RP_DB_PASSWORD: 'drupal'
+      RP_DB_HOST: 'localhost'
+      RP_DB_DRIVER: 'mysql'
+      RP_MEMCACHED_HOST: 'localhost:11211'
+      SYG_DB_NAME: 'd7_syg'
+      SYG_DB_USER: 'd7'
+      SYG_DB_PASSWORD: 'drupal'
+      SYG_DB_HOST: 'localhost'
+      SYG_DB_DRIVER: 'mysql'
+      SYG_MEMCACHED_HOST: 'localhost:11211'
+      TWB_DB_NAME: 'd7_twb'
+      TWB_DB_USER: 'd7'
+      TWB_DB_PASSWORD: 'drupal'
+      TWB_DB_HOST: 'localhost'
+      TWB_DB_DRIVER: 'mysql'
+      TWB_MEMCACHED_HOST: 'localhost:11211'
+      B79_DB_NAME: 'd7_beyond79'
+      B79_DB_USER: 'd7'
+      B79_DB_PASSWORD: 'drupal'
+      B79_DB_HOST: 'localhost'
+      B79_DB_DRIVER: 'mysql'
+      B79_MEMCACHED_HOST: 'localhost:11211'
+      DB_USER: 'goldexchange'
+      DB_USERNAME: 'goldexchange'
+      DB_PASSWORD: 'g0ld13l0cks'
+      DB_HOST: 'localhost'
+      DB_NAME: 'goldexchange'
+      DB_DATABASE: 'goldexchange'
+      MEMCACHED_HOST: 'localhost:11211'
+php::settings:
+  Date\date.timezone: America/New_York
+  PHP/variables_order: EGPCS
+  PHP/auto_prepend_file: '/var/www/auto_prepend_file.php'
+php::fpm::settings:
+  PHP/memory_limit: 128M
+  PHP/short_open_tag: 'On'
+  PHP/auto_prepend_file: '/var/www/auto_prepend_file.php'
+php::extensions:
+  mysqlnd: {}
+  mbstring: {}
+  mcrypt: {}
+  xml: {}
+  soap: {}
+  opcache: {}
+  bcmath: {}
+  gd: {}
+  intl: {}
+## MySQL Section
+
+#NFS Section (does not apply to dev)
